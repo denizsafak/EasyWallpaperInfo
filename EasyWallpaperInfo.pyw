@@ -1,4 +1,5 @@
 import os
+from sys import exit
 import subprocess
 import tkinter as tk
 from tkinter import messagebox
@@ -22,10 +23,11 @@ show_size = config["show_size"]
 show_resolution = config["show_resolution"]
 show_location = config["show_location"]
 display_mouse_tips = config["display_mouse_tips"]
+always_on_top = config["always_on_top"]
 mutex = ctypes.windll.kernel32.CreateMutexW(None, 1, "Global\\EasyWallpaperInfoMutex")
 if ctypes.windll.kernel32.GetLastError() == 183:
     ctypes.windll.kernel32.CloseHandle(mutex)
-    messagebox.showwarning("Warning", "The program is already running.")
+    messagebox.showwarning("Warning", "The program is already running. If you can't see the program, right click on your desktop.")
     exit()
 def get_wallpaper_info():
     reg = ConnectRegistry(None, HKEY_CURRENT_USER)
@@ -36,6 +38,7 @@ def get_wallpaper_info():
     size = os.path.getsize(wallpaper_path)
     location = wallpaper_path
     img = Image.open(wallpaper_path)
+    resolution = f"{img.width}x{img.height}"
     exif_data = img._getexif()
     try:
         exif_data.get(270)
@@ -44,7 +47,6 @@ def get_wallpaper_info():
         title = None
     if title:
         title = title.encode('latin-1').decode('utf-8')
-    resolution = f"{img.width}x{img.height}"
     if size < 1024:
         size = f"{size} bytes"
     elif size < 1048576:
@@ -54,6 +56,9 @@ def get_wallpaper_info():
     else:
         size = f"{round(size / 1073741824, 2)} GB"
     return title, size, resolution, location
+def exit_application():
+    indicator.destroy()
+    os._exit(0)
 def open_wallpaper_location():
     title, _, _, location = get_wallpaper_info()
     subprocess.Popen(['explorer', '/select,', location])
@@ -65,9 +70,6 @@ def copy_title_text():
     indicator.clipboard_clear()
     indicator.clipboard_append(title)
     indicator.update()
-def exit_application():
-    indicator.destroy()
-    os._exit(0)
 def show_menu(event):
     menu.post(event.x_root, event.y_root)
 def on_left_click(event):
@@ -111,6 +113,8 @@ if __name__ == "__main__":
     indicator.minsize(min_width, 0)
     indicator.maxsize(indicator.winfo_screenwidth(), 0)
     indicator.attributes("-alpha", alpha)
+    if always_on_top:
+        indicator.attributes("-topmost", True)
     title, size, resolution, location = get_wallpaper_info()
     details = ""
     if show_title:
