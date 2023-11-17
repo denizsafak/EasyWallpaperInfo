@@ -49,6 +49,8 @@ python EasyWallpaperInfo.pyw
 - Right Click (Menu): Right-click on the display to open a context menu with options to open the wallpaper, go to its location, copy the title text, and exit the application.
 - To exit the application, right click on the window and select "Exit."
 
+<img title="EasyWallpaperInfo" src='examples/preview3.png' width='100%'>
+
 > [!NOTE]
 > - This script is primarily intended for Windows. Adaptations might be needed for other operating systems.
 
