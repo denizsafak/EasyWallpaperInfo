@@ -32,7 +32,6 @@ Open the config.json file to customize settings:
 ### Option 1: Executable Script
 - If you don't want to install Python and dependencies, you can download the precompiled executable version from the Releases section.
 [Download the Latest Executable (.exe) Release](https://github.com/denizsafak/EasyWallpaperInfo/releases/latest)
-- Run the Executable
 - Double-click on EasyWallpaperInfo.exe to launch the application. The wallpaper information display will appear on your screen.
 
 ### Option 2: Run with Python
