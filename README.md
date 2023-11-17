@@ -1,4 +1,4 @@
-# EasyWallpaperInfo: Wallpaper Info / Next Wallpaper
+# EasyWallpaperInfo: Wallpaper Info Widget / One CLick Next Wallpaper / Find Desktop Background Path
 EasyWallpaperInfo is a Python script that provides information about the current desktop wallpaper. It creates a simple and customizable on-screen display widget that shows details such as wallpaper title, file size, resolution, and location. The script also allows users to open the wallpaper, go to its location in File Explorer or copy the title text.
 
 <img title="EasyWallpaperInfo" src='examples/preview1.png' width='100%'>
