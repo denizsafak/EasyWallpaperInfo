@@ -1,16 +1,18 @@
 {
     "always_on_top": false,
+    "display_mouse_tips": false,
+    "position": "bottom_left",
+    "text_align": "left",
     "text_size": 10,
     "text_font": "Arial",
     "text_color": "white",
     "background_color": "black",
-    "alpha": 0.7,
-    "bottom_margin": 118,
-    "min_width": 200,
+    "alpha": 0.6,
+    "bottom_margin": 102,
+    "min_width": 50,
     "show_title": true,
     "show_size": true,
     "show_resolution": true,
-    "show_location": true,
-    "display_mouse_tips": true,
+    "show_location": false,
     "indicator_update_frequency": 1000
 }
