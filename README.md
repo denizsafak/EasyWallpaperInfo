@@ -12,6 +12,7 @@ EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallp
 - Context menu for quick actions (open wallpaper, go to location, copy title).
 - Customizable appearance (font size, text color, background color).
 - Options to show/hide title, size, resolution, and location.
+- Options to select position or text align.
 - Mouse tips for user guidance.
 - Prevents multiple instances from running simultaneously.
 
@@ -22,8 +23,8 @@ Open the config.json file to customize settings:
 
 - `"always_on_top":` Set it true, if you want the widget always on top of the screen.
 - `"display_mouse_tips":` Display mouse tips.
-- `"position":` Where the widget located. `(Please select change it on widget options.)`
-- `"text_align":` Align of the text. `(Please select change it on widget options.)`
+- `"position":` Where the widget located. `(Please change it on widget options.)`
+- `"text_align":` Align of the text. `(Please change it on widget options.)`
 - `text_size`, `text_font`, `text_color`, `background_color`: Appearance settings.
 - `alpha:` Transparency level of the display window.
 - `bottom_margin:` Margin from bottom. (Applies only when it is located on bottom.)
