@@ -20,13 +20,16 @@ EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallp
 ## `Configuration`
 Open the config.json file to customize settings:
 
-- `"bottom_margin":` Distance from the bottom of the screen.
-- `min_width:` Minimum width of the display window.
-- `alpha:` Transparency level of the display window.
-- `indicator_update_frequency:` Update frequency of wallpaper details.
+- `"always_on_top":` Set it true, if you want the widget always on top of the screen.
+- `"display_mouse_tips":` Display mouse tips.
+- `"position":` Where the widget located. `(Please select change it on widget options.)`
+- `"text_align":` Align of the text. `(Please select change it on widget options.)`
 - `text_size`, `text_font`, `text_color`, `background_color`: Appearance settings.
+- `alpha:` Transparency level of the display window.
+- `bottom_margin:` Margin from bottom. (Applies only when it is located on bottom.)
+- `min_width:` Minimum width of the display window.
 - `show_title`, `show_size`, `show_resolution`, `show_location`: Toggle display of information.
-- `display_mouse_tips:` Display initial mouse tips.
+- `indicator_update_frequency:` Update frequency of wallpaper details.
 
 ## `How to Run?`
 
