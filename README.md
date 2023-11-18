@@ -1,5 +1,5 @@
 # EasyWallpaperInfo: Wallpaper Info Widget / One Click Next Wallpaper / Find Desktop Background Path
-EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallpaper. With a simple and customizable widget, you can see the wallpaper’s metadata title, filesize, resolution, and location on your screen. You can also cycle to the next wallpaper with a click, or open the current one in File Explorer or your default image viewer. If you want to copy the wallpaper’s metadata title, you can do that too with a single click. EasyWallpaperInfo is a great tool for wallpaper enthusiasts who want to know more about their desktop backgrounds.
+EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallpaper. With a simple and customizable widget, you can see your current wallpaper’s metadata title, filesize, resolution, and location on your screen. You can also cycle to the next wallpaper with a click, or open the wallpaper in file explorer or your default image viewer. EasyWallpaperInfo is a great tool for wallpaper enthusiasts who want to know more about their desktop backgrounds.
 
 <img title="EasyWallpaperInfo" src='examples/preview1.png' width='100%'>
 
@@ -15,7 +15,7 @@ EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallp
 - Mouse tips for user guidance.
 - Prevents multiple instances from running simultaneously.
 
-<img title="EasyWallpaperInfo" src='examples/preview2.png' width='100%'>
+<img title="EasyWallpaperInfo Options" src='examples/preview2.png' width='100%'>
 
 ## `Configuration`
 Open the config.json file to customize settings:
@@ -49,7 +49,7 @@ python EasyWallpaperInfo.pyw
 - Right Click (Menu): Right-click on the display to open a context menu with options to open the wallpaper, go to its location, copy the title text, and exit the application.
 - To exit the application, right click on the window and select "Exit."
 
-<img title="EasyWallpaperInfo" src='examples/preview3.png' width='100%'>
+<img title="EasyWallpaperInfo Mouse Tips" src='examples/preview3.png' width='100%'>
 
 > [!NOTE]
 > - This script is primarily intended for Windows. Adaptations might be needed for other operating systems.
