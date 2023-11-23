@@ -20,6 +20,27 @@ EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallp
 
 ## `Configuration`
 Open the config.json file to customize settings:
+```json
+{
+    "always_on_top": false,
+    "display_mouse_tips": false,
+    "position": "bottom_left",
+    "text_align": "left",
+    "text_size": 10,
+    "text_font": "Arial",
+    "text_color": "white",
+    "background_color": "black",
+    "alpha": 0.6,
+    "bottom_margin": 118,
+    "min_width": 200,
+    "show_title": true,
+    "title_as_filename": false,
+    "show_size": true,
+    "show_resolution": true,
+    "show_location": true,
+    "indicator_update_frequency": 1000
+}
+```
 
 - `"always_on_top":` Set it true, if you want the widget always on top of the screen.
 - `"display_mouse_tips":` Display mouse tips.
