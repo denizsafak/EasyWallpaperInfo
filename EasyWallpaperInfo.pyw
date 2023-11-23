@@ -1,13 +1,12 @@
 import os
-from sys import exit
 import subprocess
 import tkinter as tk
 from tkinter import messagebox
 from winreg import ConnectRegistry, OpenKey, QueryValueEx, HKEY_CURRENT_USER
 from PIL import Image
-import time
 import ctypes
 import json
+Image.MAX_IMAGE_PIXELS = None
 with open("config.json", "r") as f:
     config = json.load(f)
 bottom_margin = config["bottom_margin"]
@@ -26,49 +25,61 @@ display_mouse_tips = config["display_mouse_tips"]
 always_on_top = config["always_on_top"]
 position = config["position"]
 text_align = config["text_align"]
+title_as_filename = config["title_as_filename"]
 mutex = ctypes.windll.kernel32.CreateMutexW(None, 1, "Global\\EasyWallpaperInfoMutex")
 if ctypes.windll.kernel32.GetLastError() == 183:
     ctypes.windll.kernel32.CloseHandle(mutex)
     messagebox.showwarning("Warning", "The program is already running. If you can't see the program, right click on your desktop.")
     os._exit(0)
-def get_wallpaper_info():
+def get_wallpaper_path():
     reg = ConnectRegistry(None, HKEY_CURRENT_USER)
     key = OpenKey(reg, r"Control Panel\Desktop")
     value, _ = QueryValueEx(key, "TranscodedImageCache")
     wallpaper_path = value[24:].decode('utf-16-le').rstrip('\x00')
-    filename = os.path.basename(wallpaper_path)
-    size = os.path.getsize(wallpaper_path)
-    location = wallpaper_path
-    img = Image.open(wallpaper_path)
-    resolution = f"{img.width}x{img.height}"
-    exif_data = img._getexif()
-    try:
-        exif_data.get(270)
-        title = exif_data.get(270)
-    except AttributeError:
-        title = None
-    if title:
-        title = title.encode('latin-1').decode('utf-8')
+    return wallpaper_path
+def get_image_size(image_path):
+    size = os.path.getsize(image_path)
     if size < 1024:
-        size = f"{size} bytes"
+        size_str = f"{size} bytes"
     elif size < 1048576:
-        size = f"{round(size / 1024, 2)} KB"
+        size_str = f"{round(size / 1024, 2)} KB"
     elif size < 1073741824:
-        size = f"{round(size / 1048576, 2)} MB"
+        size_str = f"{round(size / 1048576, 2)} MB"
     else:
-        size = f"{round(size / 1073741824, 2)} GB"
-    return title, size, resolution, location
+        size_str = f"{round(size / 1073741824, 2)} GB"
+    return size_str
+def get_image_resolution(image_path):
+    img = Image.open(image_path)
+    resolution = f"{img.width}x{img.height}"
+    return resolution
+def get_image_title(image_path):
+    img = Image.open(image_path)
+    if title_as_filename:
+        title = os.path.basename(image_path)
+        title = os.path.splitext(title)[0]
+    else:
+        exif_data = img._getexif()
+        try:
+            title = exif_data.get(270)
+            if title:
+                title = title.encode('latin-1').decode('utf-8')
+            else:
+                title = None
+        except AttributeError:
+            title = None
+    return title
 def exit_application():
     indicator.destroy()
     os._exit(0)
 def open_wallpaper_location():
-    title, _, _, location = get_wallpaper_info()
+    location = get_wallpaper_path()
     subprocess.Popen(['explorer', '/select,', location])
 def open_wallpaper():
-    title, _, _, location = get_wallpaper_info()
+    location = get_wallpaper_path()
     subprocess.Popen(['start', '', location], shell=True)
 def copy_title_text():
-    title, _, _, _ = get_wallpaper_info()
+    wallpaper_path = get_wallpaper_path()
+    title = get_image_title(wallpaper_path)
     indicator.clipboard_clear()
     indicator.clipboard_append(title)
     indicator.update()
@@ -83,16 +94,19 @@ def reset_cursor(event):
     subprocess.call("NextBackground.exe")
     update_label()
 def update_label():
-    title, size, resolution, location = get_wallpaper_info()
     details = ""
+    wallpaper_path = get_wallpaper_path()
     if show_title:
+        title = get_image_title(wallpaper_path)
         details += f"Title: {title}\n"
     if show_size:
+        size = get_image_size(wallpaper_path)
         details += f"Filesize: {size}\n"
     if show_resolution:
+        resolution = get_image_resolution(wallpaper_path)
         details += f"Resolution: {resolution}\n"
     if show_location:
-        details += f"Location: {location}\n"
+        details += f"Location: {wallpaper_path}\n"
     details = details[:-1]
     label.config(text=details)
     indicator.after(indicator_update_frequency, update_label)
@@ -180,18 +194,20 @@ if __name__ == "__main__":
     indicator.attributes("-alpha", alpha)
     if always_on_top:
         indicator.attributes("-topmost", True)
-    title, size, resolution, location = get_wallpaper_info()
     details = ""
+    wallpaper_path = get_wallpaper_path()
     if show_title:
+        title = get_image_title(wallpaper_path)
         details += f"Title: {title}\n"
     if show_size:
+        size = get_image_size(wallpaper_path)
         details += f"Filesize: {size}\n"
     if show_resolution:
+        resolution = get_image_resolution(wallpaper_path)
         details += f"Resolution: {resolution}\n"
     if show_location:
-        details += f"Location: {location}\n"
+        details += f"Location: {wallpaper_path}\n"
     details = details[:-1]
-    
     if text_align == "center":
         anchor = "center"
     elif text_align == "left":
@@ -208,13 +224,18 @@ if __name__ == "__main__":
     label.bind("<Button-3>", on_right_click)
     label.bind("<ButtonRelease-1>", reset_cursor)
     menu = tk.Menu(indicator, tearoff=0)
+    version = "v1.3"
+    github_link = "https://github.com/denizsafak/EasyWallpaperInfo"
+    menu.add_command(label=f"EasyWallpaperInfo {version}", command=lambda: os.startfile(github_link), foreground="grey")
+    menu.add_separator()
     menu.add_command(label="Open wallpaper", command=open_wallpaper)
     menu.add_command(label="Go to wallpaper location", command=open_wallpaper_location)
     menu.add_command(label="Copy title text", command=copy_title_text)
+    menu.add_separator()
     position_menu = tk.Menu(indicator, tearoff=0)
     position_vars = {}
     for pos in ["center", "top_center", "bottom_center", "top_left", "top_right", "bottom_left", "bottom_right"]:
-        label_text = pos.replace("_", " ").capitalize()  # Replace underscores with spaces
+        label_text = pos.replace("_", " ").capitalize()
         var = tk.IntVar(value=1 if config["position"] == pos else 0)
         position_vars[pos] = var
         position_menu.add_checkbutton(label=label_text, variable=var, command=lambda p=pos, v=var: change_position(p, v))
@@ -227,9 +248,11 @@ if __name__ == "__main__":
         text_align_vars[align] = var
         text_align_menu.add_checkbutton(label=label_text, variable=var, command=lambda a=align, v=var: change_text_align(a, v))
     menu.add_cascade(label="Text Align", menu=text_align_menu)
-    # Add command to toggle mouse tips display
     mouse_tips_var = tk.IntVar(value=1 if config["display_mouse_tips"] else 0)
     menu.add_checkbutton(label="Display Mouse Tips", variable=mouse_tips_var, command=lambda: toggle_mouse_tips(mouse_tips_var))
+    menu.add_command(label="Edit config.json", command=lambda: os.startfile("config.json"))
+    
+
     menu.add_command(label="Exit", command=exit_application)
     update_label()
     indicator.bind("<Configure>", lambda e: set_indicator_position(config["position"]))
