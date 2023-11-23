@@ -29,6 +29,7 @@ Open the config.json file to customize settings:
 - `alpha:` Transparency level of the display window.
 - `bottom_margin:` Margin from bottom. (Applies only when it is located on bottom.)
 - `min_width:` Minimum width of the display window.
+- `title_as_filename:` Instead of using meta title of the image as title, use the filename.
 - `show_title`, `show_size`, `show_resolution`, `show_location`: Toggle display of information.
 - `indicator_update_frequency:` Update frequency of wallpaper details.
 
