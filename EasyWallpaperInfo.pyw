@@ -10,6 +10,8 @@ import threading
 Image.MAX_IMAGE_PIXELS = None
 with open("config.json", "r") as f:
     config = json.load(f)
+version = "v1.4"
+github_link = "https://github.com/denizsafak/EasyWallpaperInfo"
 bottom_margin = config["bottom_margin"]
 min_width = config["min_width"]
 alpha = config["alpha"]
@@ -234,8 +236,6 @@ if __name__ == "__main__":
     label.bind("<Button-3>", on_right_click)
     label.bind("<ButtonRelease-1>", reset_cursor)
     menu = tk.Menu(indicator, tearoff=0)
-    version = "v1.3"
-    github_link = "https://github.com/denizsafak/EasyWallpaperInfo"
     menu.add_command(label=f"EasyWallpaperInfo {version}", command=lambda: os.startfile(github_link), foreground="grey")
     menu.add_separator()
     menu.add_command(label="Open wallpaper", command=open_wallpaper)
