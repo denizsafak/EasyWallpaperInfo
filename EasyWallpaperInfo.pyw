@@ -6,6 +6,7 @@ from winreg import ConnectRegistry, OpenKey, QueryValueEx, HKEY_CURRENT_USER
 from PIL import Image
 import ctypes
 import json
+import threading
 Image.MAX_IMAGE_PIXELS = None
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -32,11 +33,15 @@ if ctypes.windll.kernel32.GetLastError() == 183:
     messagebox.showwarning("Warning", "The program is already running. If you can't see the program, right click on your desktop.")
     os._exit(0)
 def get_wallpaper_path():
-    reg = ConnectRegistry(None, HKEY_CURRENT_USER)
-    key = OpenKey(reg, r"Control Panel\Desktop")
-    value, _ = QueryValueEx(key, "TranscodedImageCache")
-    wallpaper_path = value[24:].decode('utf-16-le').rstrip('\x00')
-    return wallpaper_path
+    try:
+        reg = ConnectRegistry(None, HKEY_CURRENT_USER)
+        key = OpenKey(reg, r"Control Panel\Desktop")
+        value, _ = QueryValueEx(key, "TranscodedImageCache")
+        wallpaper_path = value[24:].decode('utf-16-le').rstrip('\x00')
+        return wallpaper_path
+    finally:
+        key.Close()
+        reg.Close()
 def get_image_size(image_path):
     size = os.path.getsize(image_path)
     if size < 1024:
@@ -49,11 +54,17 @@ def get_image_size(image_path):
         size_str = f"{round(size / 1073741824, 2)} GB"
     return size_str
 def get_image_resolution(image_path):
-    img = Image.open(image_path)
+    try:
+        img = Image.open(image_path)
+    finally:
+        img.close()
     resolution = f"{img.width}x{img.height}"
     return resolution
 def get_image_title(image_path):
-    img = Image.open(image_path)
+    try:
+        img = Image.open(image_path)
+    finally:
+        img.close()
     if title_as_filename:
         title = os.path.basename(image_path)
         title = os.path.splitext(title)[0]
@@ -92,7 +103,6 @@ def on_right_click(event):
 def reset_cursor(event):
     label.after(10, lambda: label.config(cursor="hand2"))
     subprocess.call("NextBackground.exe")
-    update_label()
 def update_label():
     details = ""
     wallpaper_path = get_wallpaper_path()
@@ -251,8 +261,6 @@ if __name__ == "__main__":
     mouse_tips_var = tk.IntVar(value=1 if config["display_mouse_tips"] else 0)
     menu.add_checkbutton(label="Display Mouse Tips", variable=mouse_tips_var, command=lambda: toggle_mouse_tips(mouse_tips_var))
     menu.add_command(label="Edit config.json", command=lambda: os.startfile("config.json"))
-    
-
     menu.add_command(label="Exit", command=exit_application)
     update_label()
     indicator.bind("<Configure>", lambda e: set_indicator_position(config["position"]))
