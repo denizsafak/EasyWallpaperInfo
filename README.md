@@ -1,4 +1,4 @@
-# EasyWallpaperInfo: Wallpaper Info Widget / One Click Next Wallpaper / Find Desktop Background Path
+# EasyWallpaperInfo: Desktop Wallpaper Info Widget / One Click Next Wallpaper / Find Desktop Background Path
 EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallpaper. With a simple and customizable widget, you can see your current wallpaper’s metadata title, filesize, resolution, and location on your screen. You can also cycle to the next wallpaper with a click, or open the wallpaper in file explorer or your default image viewer. EasyWallpaperInfo is a great tool for wallpaper enthusiasts who want to know more about their desktop backgrounds.
 
 <img title="EasyWallpaperInfo" src='examples/preview1.png' width='100%'>
