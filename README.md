@@ -63,12 +63,8 @@ Open the config.json file to customize settings:
 
 ### Option 2: Run with Python
 - Clone or download the repository to your local machine.
-- Install the required Python packages and Python itself.
-- Open a terminal in the project directory and type:
-```bash
-python -m pip install Pillow
-python EasyWallpaperInfo.pyw
-```
+- Install Python to your computer.
+- Run "run.bat" file.
 - The wallpaper information display will appear on your screen.
 
 ## `Useage`
