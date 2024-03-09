@@ -1,15 +1,15 @@
 @echo off
-IF NOT EXIST .env\Scripts\activate (
+IF NOT EXIST .venv\Scripts\activate (
     echo Creating virtual environment...
-    virtualenv .env
+    virtualenv .venv
     echo Virtual environment created.
 )
 
 echo Activating virtual environment...
-call .env\Scripts\activate
+call .venv\Scripts\activate
 
 echo Installing requirements...
 pip install -r requirements.txt
 
-echo Starting EasyWallpaperInfo.pyw...
-start /B "" ".env/Scripts/pythonw.exe" EasyWallpaperInfo.pyw
+echo Starting EasyWallpaperInfo...
+start /B "" ".venv/Scripts/pythonw.exe" EasyWallpaperInfo.pyw
