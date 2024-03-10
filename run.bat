@@ -1,15 +1,22 @@
 @echo off
-IF NOT EXIST .venv\Scripts\activate (
+set NAME=HotspotAutoLogin
+set VENV_PATH=.venv
+set ACTIVATE_PATH=%VENV_PATH%\Scripts\activate
+
+IF NOT EXIST %ACTIVATE_PATH% (
     echo Creating virtual environment...
-    virtualenv .venv
-    echo Virtual environment created.
+    virtualenv %VENV_PATH%
 )
 
 echo Activating virtual environment...
-call .venv\Scripts\activate
+call %ACTIVATE_PATH%
 
-echo Installing requirements...
-pip install -r requirements.txt
+echo Checking the requirements...
+pip freeze | findstr /r /g:requirements.txt > nul
+if %errorlevel% neq 0 (
+    echo Installing missing or outdated requirements...
+    pip install -r requirements.txt --upgrade --quiet
+)
 
-echo Starting EasyWallpaperInfo...
-start /B "" ".venv/Scripts/pythonw.exe" EasyWallpaperInfo.pyw
+echo Starting %NAME%...
+start /B "" "%VENV_PATH%/Scripts/pythonw.exe" EasyWallpaperInfo.pyw
