@@ -1,5 +1,5 @@
 @echo off
-set NAME=HotspotAutoLogin
+set NAME=EasyWallpaperInfo
 set VENV_PATH=.venv
 set ACTIVATE_PATH=%VENV_PATH%\Scripts\activate
 
