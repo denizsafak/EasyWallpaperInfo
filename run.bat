@@ -1,5 +1,7 @@
 @echo off
 set NAME=EasyWallpaperInfo
+set RUN=EasyWallpaperInfo.pyw
+set "requirementsFile=requirements.txt"
 set VENV_PATH=.venv
 set ACTIVATE_PATH=%VENV_PATH%\Scripts\activate
 
@@ -12,11 +14,13 @@ echo Activating virtual environment...
 call %ACTIVATE_PATH%
 
 echo Checking the requirements...
-pip freeze | findstr /r /g:requirements.txt > nul
-if %errorlevel% neq 0 (
-    echo Installing missing or outdated requirements...
-    pip install -r requirements.txt --upgrade --quiet
+for /f "delims=" %%i in (%requirementsFile%) do (
+    pip freeze | findstr /c:%%i > nul
+    if errorlevel 1 (
+        echo Installing missing or outdated package: %%i
+        pip install %%i --upgrade --quiet
+    )
 )
 
 echo Starting %NAME%...
-start /B "" "%VENV_PATH%/Scripts/pythonw.exe" EasyWallpaperInfo.pyw
+start /B "" "%VENV_PATH%/Scripts/pythonw.exe" %RUN%
