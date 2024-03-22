@@ -68,7 +68,7 @@ Open the config.json file to customize settings:
 - `"text_align":` Align of the text. `(Please change it on widget menu.)`
 - `text_size`, `text_font`, `text_color`, `background_color`: Appearance settings.
 - `alpha:` Transparency level of the display window.
-- `bottom_margin:` Margin from bottom. (Applies only when it is located on bottom.)
+- `bottom_margin:` Margin (distance) from bottom. (Applies only when it is located on bottom.)
 - `min_width:` Minimum width of the display window.
 - `title_as_filename:` Instead of using meta title, use the filename as title.
 - `show_title`, `show_size`, `show_resolution`, `show_location`: Toggle display of information.
