@@ -1,16 +1,15 @@
 import os
 import subprocess
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog, colorchooser
 from winreg import ConnectRegistry, OpenKey, QueryValueEx, HKEY_CURRENT_USER
 from PIL import Image
 import ctypes
 import json
-import threading
 Image.MAX_IMAGE_PIXELS = None
 with open("config.json", "r") as f:
     config = json.load(f)
-version = "v1.4"
+version = "v1.5"
 github_link = "https://github.com/denizsafak/EasyWallpaperInfo"
 bottom_margin = config["bottom_margin"]
 min_width = config["min_width"]
@@ -41,6 +40,9 @@ def get_wallpaper_path():
         value, _ = QueryValueEx(key, "TranscodedImageCache")
         wallpaper_path = value[24:].decode('utf-16-le').rstrip('\x00')
         return wallpaper_path
+    except FileNotFoundError:
+        messagebox.showwarning("Warning", "Couldn't find wallpaper path. Make sure you have set a wallpaper.")
+        os._exit(0)
     finally:
         key.Close()
         reg.Close()
@@ -67,7 +69,7 @@ def get_image_title(image_path):
         img = Image.open(image_path)
     finally:
         img.close()
-    if title_as_filename:
+    if config["title_as_filename"]:
         title = os.path.basename(image_path)
         title = os.path.splitext(title)[0]
     else:
@@ -103,24 +105,30 @@ def on_left_click(event):
 def on_right_click(event):
     show_menu(event)
 def reset_cursor(event):
-    label.after(10, lambda: label.config(cursor="hand2"))
+    # label.after(3, lambda: label.config(cursor="hand2"))
     subprocess.call("NextBackground.exe")
+    # label.config(cursor="wait")
+previous_details = ""
 def update_label():
+    global previous_details
     details = ""
     wallpaper_path = get_wallpaper_path()
-    if show_title:
+    if config["show_title"]:
         title = get_image_title(wallpaper_path)
         details += f"Title: {title}\n"
-    if show_size:
+    if config["show_size"]:
         size = get_image_size(wallpaper_path)
         details += f"Filesize: {size}\n"
-    if show_resolution:
+    if config["show_resolution"]:
         resolution = get_image_resolution(wallpaper_path)
         details += f"Resolution: {resolution}\n"
-    if show_location:
+    if config["show_location"]:
         details += f"Location: {wallpaper_path}\n"
     details = details[:-1]
-    label.config(text=details)
+    if details != previous_details:
+        label.config(cursor="hand2")
+        previous_details = details
+        label.config(text=details)
     indicator.after(indicator_update_frequency, update_label)
 def display_message(message):
     background_color = config["background_color"]
@@ -139,6 +147,7 @@ def display_message(message):
     msg_window.after(5000, msg_window.destroy)
     msg_window.mainloop()
 def set_indicator_position(position):
+    global indicator
     if position == "center":
         x = (indicator.winfo_screenwidth() - indicator.winfo_width()) // 2
         y = (indicator.winfo_screenheight() - indicator.winfo_height()) // 2
@@ -147,17 +156,17 @@ def set_indicator_position(position):
         y = 0
     elif position == "bottom_center":
         x = (indicator.winfo_screenwidth() - indicator.winfo_width()) // 2
-        y = indicator.winfo_screenheight() - bottom_margin
+        y = indicator.winfo_screenheight() - config["bottom_margin"]  # Adjust based on bottom_margin
     elif position == "top_left":
         x, y = 0, 0
     elif position == "top_right":
         x = indicator.winfo_screenwidth() - indicator.winfo_width()
         y = 0
     elif position == "bottom_left":
-        x, y = 0, indicator.winfo_screenheight() - bottom_margin
+        x, y = 0, indicator.winfo_screenheight() - config["bottom_margin"]  # Adjust based on bottom_margin
     elif position == "bottom_right":
         x = indicator.winfo_screenwidth() - indicator.winfo_width()
-        y = indicator.winfo_screenheight() - bottom_margin
+        y = indicator.winfo_screenheight() - config["bottom_margin"]  # Adjust based on bottom_margin
     else:
         messagebox.showwarning("Warning", "Invalid position value in config.json")
         os._exit(0)
@@ -191,6 +200,76 @@ def change_text_align(align, check_var):
     with open("config.json", "w") as f:
         json.dump(config, f, indent=4)
     update_label_text_align()
+def change_bottom_margin():
+    current_margin = config["bottom_margin"]
+    new_margin = simpledialog.askinteger("Change Bottom Margin", "Enter the new bottom margin value:", initialvalue=current_margin)
+    if new_margin is not None:
+        config["bottom_margin"] = new_margin
+        set_indicator_position(config["position"])  # Update position
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=4)
+def change_background_color():
+    # Open a color picker dialog with the current background color as default
+    color = colorchooser.askcolor(title="Choose Background Color", initialcolor=config["background_color"])
+    if color[1]:  # Check if a color was selected
+        config["background_color"] = color[1]  # Update the background color in config
+        label.config(bg=color[1])  # Update the background color of the label
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=4)
+def change_text_color():
+    # Open a color picker dialog with the current text color as default
+    color = colorchooser.askcolor(title="Choose Text Color", initialcolor=config["text_color"])
+    if color[1]:  # Check if a color was selected
+        config["text_color"] = color[1]  # Update the text color in config
+        label.config(fg=color[1])  # Update the text color of the label
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=4)
+def change_transparency():
+    # Ask the user for the new alpha value (transparency)
+    new_alpha = simpledialog.askfloat("Change Transparency", "Enter the new alpha value (0.0 - 1.0):", initialvalue=config["alpha"], minvalue=0.1, maxvalue=1.0)
+    if new_alpha is not None:
+        config["alpha"] = new_alpha  # Update the alpha value in config
+        indicator.attributes("-alpha", new_alpha)  # Update the alpha value of the indicator window
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=4)
+def toggle_always_on_top(variable):
+    config["always_on_top"] = bool(variable.get())
+    indicator.attributes("-topmost", config["always_on_top"])
+    with open("config.json", "w") as f:
+        json.dump(config, f, indent=4)
+def change_min_width():
+    current_min_width = config["min_width"]
+    new_min_width = simpledialog.askinteger("Change Min Width", "Enter the new min width value:", initialvalue=current_min_width)
+    if new_min_width is not None:
+        config["min_width"] = new_min_width
+        indicator.minsize(new_min_width, 0)
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=4)
+def toggle_show_title(variable):
+    config["show_title"] = bool(variable.get())
+    with open("config.json", "w") as f:
+        json.dump(config, f, indent=4)
+    update_label()
+def toggle_title_as_filename(variable):
+    config["title_as_filename"] = bool(variable.get())
+    with open("config.json", "w") as f:
+        json.dump(config, f, indent=4)
+    update_label()
+def toggle_show_size(variable):
+    config["show_size"] = bool(variable.get())
+    with open("config.json", "w") as f:
+        json.dump(config, f, indent=4)
+    update_label()
+def toggle_show_resolution(variable):
+    config["show_resolution"] = bool(variable.get())
+    with open("config.json", "w") as f:
+        json.dump(config, f, indent=4)
+    update_label()
+def toggle_show_location(variable):
+    config["show_location"] = bool(variable.get())
+    with open("config.json", "w") as f:
+        json.dump(config, f, indent=4)
+    update_label()
 def toggle_mouse_tips(variable):
     config["display_mouse_tips"] = bool(variable.get())
     with open("config.json", "w") as f:
@@ -258,6 +337,27 @@ if __name__ == "__main__":
         text_align_vars[align] = var
         text_align_menu.add_checkbutton(label=label_text, variable=var, command=lambda a=align, v=var: change_text_align(a, v))
     menu.add_cascade(label="Text Align", menu=text_align_menu)
+    submenu_show_options = tk.Menu(menu, tearoff=0)
+    title_as_filename_var = tk.IntVar(value=config["title_as_filename"])
+    submenu_show_options.add_checkbutton(label="Title as Filename", variable=title_as_filename_var, command=lambda: toggle_title_as_filename(title_as_filename_var))
+    show_title_var = tk.IntVar(value=config["show_title"])
+    submenu_show_options.add_checkbutton(label="Show Title", variable=show_title_var, command=lambda: toggle_show_title(show_title_var))
+    show_size_var = tk.IntVar(value=config["show_size"])
+    submenu_show_options.add_checkbutton(label="Show Size", variable=show_size_var, command=lambda: toggle_show_size(show_size_var))
+    show_resolution_var = tk.IntVar(value=config["show_resolution"])
+    submenu_show_options.add_checkbutton(label="Show Resolution", variable=show_resolution_var, command=lambda: toggle_show_resolution(show_resolution_var))
+    show_location_var = tk.IntVar(value=config["show_location"])
+    submenu_show_options.add_checkbutton(label="Show Location", variable=show_location_var, command=lambda: toggle_show_location(show_location_var))
+    menu.add_cascade(label="Show Options", menu=submenu_show_options)
+    menu.add_command(label="Change Bottom Margin", command=change_bottom_margin)
+    menu.add_command(label="Change Minimum Width", command=change_min_width)
+    menu.add_separator()
+    menu.add_command(label="Change Background Color", command=change_background_color)
+    menu.add_command(label="Change Text Color", command=change_text_color)
+    menu.add_command(label="Change Transparency", command=change_transparency)
+    menu.add_separator()
+    always_on_top_var = tk.IntVar(value=1 if config["always_on_top"] else 0)
+    menu.add_checkbutton(label="Always on Top", variable=always_on_top_var, command=lambda: toggle_always_on_top(always_on_top_var))
     mouse_tips_var = tk.IntVar(value=1 if config["display_mouse_tips"] else 0)
     menu.add_checkbutton(label="Display Mouse Tips", variable=mouse_tips_var, command=lambda: toggle_mouse_tips(mouse_tips_var))
     menu.add_command(label="Edit config.json", command=lambda: os.startfile("config.json"))
