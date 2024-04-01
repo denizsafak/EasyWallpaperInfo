@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import messagebox, simpledialog, colorchooser
 from winreg import ConnectRegistry, OpenKey, QueryValueEx, HKEY_CURRENT_USER
 from PIL import Image
+from ahk import AHK
 import ctypes
 import json
 Image.MAX_IMAGE_PIXELS = None
@@ -33,6 +34,14 @@ if ctypes.windll.kernel32.GetLastError() == 183:
     ctypes.windll.kernel32.CloseHandle(mutex)
     messagebox.showwarning("Warning", "The program is already running. If you can't see the program, right click on your desktop.")
     os._exit(0)
+ahk = AHK(version='v2')
+next_wallpaper_trigger = '''\
+#NoTrayIcon
+try if ((pDesktopWallpaper := ComObject("{C2CF3110-460E-4fc1-B9D0-8A1C0C9CC4BD}", "{B92B56A9-8B55-4E14-9A89-0199BBB6F93B}"))) {
+        ComCall(16, pDesktopWallpaper, "Ptr", 0, "UInt", 0) 
+        ObjRelease(pDesktopWallpaper)
+}
+'''
 def get_wallpaper_path():
     try:
         reg = ConnectRegistry(None, HKEY_CURRENT_USER)
@@ -106,7 +115,7 @@ def on_right_click(event):
     show_menu(event)
 def reset_cursor(event):
     # label.after(3, lambda: label.config(cursor="hand2"))
-    subprocess.call("NextBackground.exe")
+    ahk.run_script(next_wallpaper_trigger)
     # label.config(cursor="wait")
 previous_details = ""
 def update_label():
