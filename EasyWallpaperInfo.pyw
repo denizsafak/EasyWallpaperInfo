@@ -233,6 +233,14 @@ def change_text_color():
         label.config(fg=color[1])  # Update the text color of the label
         with open("config.json", "w") as f:
             json.dump(config, f, indent=4)
+def change_text_size():
+    current_text_size = config["text_size"]
+    new_text_size = simpledialog.askinteger("Change Text Size", "Enter the new text size value:", initialvalue=current_text_size)
+    if new_text_size is not None:
+        config["text_size"] = new_text_size
+        label.config(font=(text_font, new_text_size))
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=4)
 def change_transparency():
     # Ask the user for the new alpha value (transparency)
     new_alpha = simpledialog.askfloat("Change Transparency", "Enter the new alpha value (0.0 - 1.0):", initialvalue=config["alpha"], minvalue=0.1, maxvalue=1.0)
@@ -361,8 +369,9 @@ if __name__ == "__main__":
     menu.add_command(label="Change Bottom Margin", command=change_bottom_margin)
     menu.add_command(label="Change Minimum Width", command=change_min_width)
     menu.add_separator()
-    menu.add_command(label="Change Background Color", command=change_background_color)
+    menu.add_command(label="Change Text Size", command=change_text_size)
     menu.add_command(label="Change Text Color", command=change_text_color)
+    menu.add_command(label="Change Background Color", command=change_background_color)
     menu.add_command(label="Change Transparency", command=change_transparency)
     menu.add_separator()
     always_on_top_var = tk.IntVar(value=1 if config["always_on_top"] else 0)
