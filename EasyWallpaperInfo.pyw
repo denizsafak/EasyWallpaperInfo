@@ -10,7 +10,7 @@ import json
 Image.MAX_IMAGE_PIXELS = None
 with open("config.json", "r") as f:
     config = json.load(f)
-version = "v1.5"
+version = "v1.6"
 github_link = "https://github.com/denizsafak/EasyWallpaperInfo"
 bottom_margin = config["bottom_margin"]
 min_width = config["min_width"]
