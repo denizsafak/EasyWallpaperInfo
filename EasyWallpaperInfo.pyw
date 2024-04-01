@@ -2,6 +2,7 @@ import os
 import subprocess
 import tkinter as tk
 from tkinter import messagebox, simpledialog, colorchooser
+import tkinter.font as tkFont
 from winreg import ConnectRegistry, OpenKey, QueryValueEx, HKEY_CURRENT_USER
 from PIL import Image
 from ahk import AHK
@@ -241,6 +242,22 @@ def change_text_size():
         label.config(font=(text_font, new_text_size))
         with open("config.json", "w") as f:
             json.dump(config, f, indent=4)
+def change_text_font(font_family):
+        config["text_font"] = font_family
+        label.config(font=(config["text_font"], config["text_size"]))
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=4)
+font_var = None
+def populate_font_submenu(submenu):
+    global font_var
+    fonts = tkFont.families()
+    if font_var is None:
+        font_var = tk.StringVar()
+    selected_font = config["text_font"]
+    for font_family in fonts:
+        submenu.add_radiobutton(label=font_family, variable=font_var, value=font_family, command=lambda f=font_family: change_text_font(f))
+        if font_family == selected_font:
+            font_var.set(font_family)
 def change_transparency():
     # Ask the user for the new alpha value (transparency)
     new_alpha = simpledialog.askfloat("Change Transparency", "Enter the new alpha value (0.0 - 1.0):", initialvalue=config["alpha"], minvalue=0.1, maxvalue=1.0)
@@ -369,6 +386,9 @@ if __name__ == "__main__":
     menu.add_command(label="Change Bottom Margin", command=change_bottom_margin)
     menu.add_command(label="Change Minimum Width", command=change_min_width)
     menu.add_separator()
+    font_submenu = tk.Menu(menu, tearoff=0)
+    populate_font_submenu(font_submenu)
+    menu.add_cascade(label="Select Font", menu=font_submenu)
     menu.add_command(label="Change Text Size", command=change_text_size)
     menu.add_command(label="Change Text Color", command=change_text_color)
     menu.add_command(label="Change Background Color", command=change_background_color)
