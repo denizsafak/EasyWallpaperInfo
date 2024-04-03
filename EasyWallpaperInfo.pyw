@@ -159,25 +159,27 @@ def display_message(message):
     msg_window.mainloop()
 def set_indicator_position(position):
     global indicator
+    screen_width = indicator.winfo_screenwidth()
+    screen_height = indicator.winfo_screenheight()
     if position == "center":
-        x = (indicator.winfo_screenwidth() - indicator.winfo_width()) // 2
-        y = (indicator.winfo_screenheight() - indicator.winfo_height()) // 2
+        x = (screen_width - indicator.winfo_width()) // 2
+        y = (screen_height - indicator.winfo_height()) // 2
     elif position == "top_center":
-        x = (indicator.winfo_screenwidth() - indicator.winfo_width()) // 2
+        x = (screen_width - indicator.winfo_width()) // 2
         y = 0
     elif position == "bottom_center":
-        x = (indicator.winfo_screenwidth() - indicator.winfo_width()) // 2
-        y = indicator.winfo_screenheight() - config["bottom_margin"]  # Adjust based on bottom_margin
+        x = (screen_width - indicator.winfo_width()) // 2
+        y = screen_height - indicator.winfo_height() - config["bottom_margin"]
     elif position == "top_left":
         x, y = 0, 0
     elif position == "top_right":
-        x = indicator.winfo_screenwidth() - indicator.winfo_width()
+        x = screen_width - indicator.winfo_width()
         y = 0
     elif position == "bottom_left":
-        x, y = 0, indicator.winfo_screenheight() - config["bottom_margin"]  # Adjust based on bottom_margin
+        x, y = 0, screen_height - indicator.winfo_height() - config["bottom_margin"]
     elif position == "bottom_right":
-        x = indicator.winfo_screenwidth() - indicator.winfo_width()
-        y = indicator.winfo_screenheight() - config["bottom_margin"]  # Adjust based on bottom_margin
+        x = screen_width - indicator.winfo_width()
+        y = screen_height - indicator.winfo_height() - config["bottom_margin"]
     else:
         messagebox.showwarning("Warning", "Invalid position value in config.json")
         os._exit(0)
@@ -391,7 +393,7 @@ if __name__ == "__main__":
     menu.add_separator()
     position_menu = tk.Menu(indicator, tearoff=0)
     position_vars = {}
-    for pos in ["center", "top_center", "bottom_center", "top_left", "top_right", "bottom_left", "bottom_right"]:
+    for pos in ["center", "top_left", "top_center", "top_right", "bottom_left", "bottom_center", "bottom_right"]:
         label_text = pos.replace("_", " ").capitalize()
         var = tk.IntVar(value=1 if config["position"] == pos else 0)
         position_vars[pos] = var
