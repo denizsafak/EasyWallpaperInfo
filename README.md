@@ -36,7 +36,7 @@ EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallp
 - Mouse tips for user guidance.
 - Prevents multiple instances from running simultaneously.
 
-<img title="EasyWallpaperInfo Options" src='examples/preview2.png' width='100%'>
+<img title="EasyWallpaperInfo Options" src='examples/easywallpaperinfo-v1.7.png' width='100%'>
 
 ## `Configuration`
 Open the config.json file to customize settings:
@@ -48,6 +48,7 @@ Open the config.json file to customize settings:
     "text_align": "left",
     "text_size": 10,
     "text_font": "Arial",
+    "text_style": "normal",
     "text_color": "white",
     "background_color": "black",
     "alpha": 0.6,
@@ -66,7 +67,7 @@ Open the config.json file to customize settings:
 - `"display_mouse_tips":` Display mouse tips.
 - `"position":` Where the widget located. `(Please change it on widget menu.)`
 - `"text_align":` Align of the text. `(Please change it on widget menu.)`
-- `text_size`, `text_font`, `text_color`, `background_color`: Appearance settings.
+- `text_size`, `text_font`, `text_style`, `text_color`, `background_color`: Appearance settings.
 - `alpha:` Transparency level of the display window.
 - `bottom_margin:` Margin (distance) from bottom. (Applies only when it is located on bottom.)
 - `min_width:` Minimum width of the display window.
