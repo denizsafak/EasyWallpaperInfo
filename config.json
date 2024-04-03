@@ -5,6 +5,7 @@
     "text_align": "left",
     "text_size": 10,
     "text_font": "Arial",
+    "text_style": "normal",
     "text_color": "#ffffff",
     "background_color": "#000000",
     "alpha": 0.6,
