@@ -9,11 +9,18 @@ from ahk import AHK
 import ctypes
 import json
 Image.MAX_IMAGE_PIXELS = None
+
+# PYINSTALLER MODE
+#ahk = AHK(executable_path='_internal\AutoHotkeyV2.exe')
+
+# DEFAULT MODE
+ahk = AHK(version='v2')
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
+
 with open("config.json", "r") as f:
     config = json.load(f)
-version = "v1.7"
+version = "v1.8"
 github_link = "https://github.com/denizsafak/EasyWallpaperInfo"
 bottom_margin = config["bottom_margin"]
 min_width = config["min_width"]
@@ -38,7 +45,6 @@ if ctypes.windll.kernel32.GetLastError() == 183:
     ctypes.windll.kernel32.CloseHandle(mutex)
     messagebox.showwarning("Warning", "The program is already running. If you can't see the program, right click on your desktop.")
     os._exit(0)
-ahk = AHK(version='v2')
 next_wallpaper_trigger = '''\
 #NoTrayIcon
 try if ((pDesktopWallpaper := ComObject("{C2CF3110-460E-4fc1-B9D0-8A1C0C9CC4BD}", "{B92B56A9-8B55-4E14-9A89-0199BBB6F93B}"))) {
