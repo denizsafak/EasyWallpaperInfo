@@ -15,7 +15,6 @@ EasyWallpaperInfo is a handy Python app that lets you explore your desktop wallp
 
 ### Option 2: Run with Python
 - Clone or download the repository to your local machine.
-- Install Python to your computer.
 - Run "run.bat" file.
 - The wallpaper information display will appear on your screen.
 
